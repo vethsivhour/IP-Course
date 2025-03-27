@@ -5,9 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Payment extends Model
 {
+    use SoftDeletes;
+    
+    protected $dates = ['deleted_at'];
     protected $fillable = ['payment_date', 'payment_method', 'amount', 'order_id', 'customer_id'];
 
     protected function paymentDate(): Attribute
