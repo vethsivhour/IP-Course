@@ -10,8 +10,9 @@ use Carbon\Carbon;
 class Order extends Model
 {
     use SoftDeletes;
-    
+
     protected $dates = ['deleted_at'];
+    protected $table = 'orders';
     protected $fillable = ['order_date', 'total_price', 'customer_id'];
 
     protected function orderDate(): Attribute
@@ -27,12 +28,14 @@ class Order extends Model
 
     public function payments()
     {
-        return $this->hasMany(Payment::class);
+        
+        return $this->hasMany(Payment::class, 'order_id');
     }
 
     public function customer()
     {
-        return $this->belongsTo(Customer::class);
+        // Corrected the syntax: passing foreign key 'customer_id' correctly
+        return $this->belongsTo(Customer::class, 'customer_id');  
     }
 
     public function orderProducts()
