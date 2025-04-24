@@ -10,11 +10,11 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::controller(CategoryController::class)->prefix('categories')->group(function() {
-    Route::get('/', 'getcategories');
-    Route::post('/', 'createCategory');
-    Route::get('/{categoryID}', 'getCategory');
-    Route::patch('/{categoryID}', 'updateCategory');
-    Route::delete('/{categoryID}', 'deleteCategory');
+    Route::get('/', 'getCategories');
+    Route::post('/', 'store');  
+    Route::get('/{category}', 'getCategory');
+    Route::put('/{category}', 'update'); 
+    Route::delete('/{category}', 'deleteCategory'); 
 });
 
 Route::controller(ProductController::class)->prefix('products')->group(function() {
