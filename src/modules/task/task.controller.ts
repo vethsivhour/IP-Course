@@ -7,9 +7,13 @@ import {
   Delete,
   Put,
   Patch,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { TasksService } from './task.service';
 import { Task } from './entities/task.entity';
+import { CreateTaskDto } from './dto/create-task.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
 
 //handle http requests from frontend
 @Controller('tasks')
@@ -27,12 +31,14 @@ export class TasksController {
   }
 
   @Post()
-  create(@Body() createTaskDto: Partial<Task>): Promise<Task> {
+  @UsePipes(new ValidationPipe({ whitelist: true }))
+  create(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
     return this.tasksService.create(createTaskDto);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateTaskDto: Partial<Task>) {
+  @UsePipes(new ValidationPipe({ whitelist: true }))
+  update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
     return this.tasksService.update(+id, updateTaskDto);
   }
 
