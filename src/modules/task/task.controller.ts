@@ -12,8 +12,8 @@ import {
 } from '@nestjs/common';
 import { TasksService } from './task.service';
 import { Task } from './entities/task.entity';
-import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { CreateTaskDto } from './dto/create-task.dto';
 
 //handle http requests from frontend
 @Controller('tasks')
@@ -40,16 +40,6 @@ export class TasksController {
   @UsePipes(new ValidationPipe({ whitelist: true }))
   update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
     return this.tasksService.update(+id, updateTaskDto);
-  }
-
-  @Patch(':id/done')
-  markAsDone(@Param('id') id: string) {
-    return this.tasksService.markAsDone(+id);
-  }
-
-  @Patch(':id/pending')
-  markAsPending(@Param('id') id: string) {
-    return this.tasksService.markAsPending(+id);
   }
 
   @Delete(':id')

@@ -1,14 +1,10 @@
-import { IsNotEmpty, IsOptional, IsString, IsInt } from 'class-validator';
+import { IsInt, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateTaskDto {
-  @IsNotEmpty()
-  @IsString()
+  @IsNotEmpty({ message: 'Task name is required' })
+  @IsString({ message: 'Task must be string'})
   name: string;
 
-  @IsOptional()
-  @IsString()
-  description?: string;
-
-  @IsInt()
-  userId: number;
+  @IsInt({ message: 'User ID must be an integer' })
+  userId: number; 
 }

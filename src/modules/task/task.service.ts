@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { Task } from './entities/task.entity';
-
+import { CreateTaskDto } from './dto/create-task.dto';
+import { Repository } from 'typeorm';
 @Injectable()
 export class TasksService {
   constructor(
@@ -10,43 +10,48 @@ export class TasksService {
     private tasksRepo: Repository<Task>,
   ) {}
 
+  // Create a new task using validated DTO
+  async create(createTaskDto: CreateTaskDto) {
+    const task = this.tasksRepo.create(createTaskDto);
+    return await this.tasksRepo.save(task);
+  }
+
+  // Find all tasks with related user
   findAll() {
     return this.tasksRepo.find({ relations: ['user'] });
   }
 
-  findOne(id: number) {
-    return this.tasksRepo.findOne({ where: { id }, relations: ['user'] });
-  }
+  // Find a single task by ID with proper error handling
+  async findOne(id: number) {
+    const task = await this.tasksRepo.findOne({ where: { id } });
 
-  create(taskData: Partial<Task>) {
-    const task = this.tasksRepo.create(taskData);
-    return this.tasksRepo.save(task);
-  }
+    if (!task) {
+      throw new NotFoundException(`Task with id ${id} not found`);
+    }
 
+    return task;
+  }
+  
+
+  // Update a task safely
   async update(id: number, updateData: Partial<Task>) {
-    await this.tasksRepo.update(id, updateData);
+    const result = await this.tasksRepo.update(id, updateData);
+
+    if (result.affected === 0) {
+      throw new NotFoundException(`Task with id ${id} not found`);
+    }
+
     return this.findOne(id);
   }
 
-  async markAsDone(id: number) {
-    const task = await this.findOne(id);
-    if (task) {
-      task.completedAt = new Date();
-      return this.tasksRepo.save(task);
-    }
-    return null;
-  }
+  // Delete a task safely
+  async remove(id: number) {
+    const result = await this.tasksRepo.delete(id);
 
-  async markAsPending(id: number) {
-    const task = await this.findOne(id);
-    if (task) {
-      task.completedAt = null;
-      return this.tasksRepo.save(task);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Task with id ${id} not found`);
     }
-    return null;
-  }
 
-  remove(id: number) {
-    return this.tasksRepo.delete(id);
+    return { message: `Task with id ${id} deleted successfully `};
   }
 }

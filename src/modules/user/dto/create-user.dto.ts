@@ -5,6 +5,7 @@ export class CreateUserDto {
   username: string;
 
   @IsEmail()
+  @IsNotEmpty({ message: 'Email is required' })
   email: string;
 
   @MinLength(3)
